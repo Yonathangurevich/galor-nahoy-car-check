@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>גל-אור נחוי בדיקות רכב</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #FFD700;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #FFD700;
+            opacity: 0.8;
+        }
+
+        .search-section {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFD700;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FFA500;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+            transform: scale(1.02);
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #FFD700;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 25px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .result-value {
+            color: #FFA500;
+        }
+
+        .error {
+            display: none;
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff4444;
+            color: #ff6666;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .search-section {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section">
+            <div class="logo">גל-אור נחוי בדיקות</div>
+            <div class="subtitle">בדיקת פרטי רכב מהירה ומדויקת</div>
+        </div>
+
+        <div class="search-section">
+            <form id="carForm">
+                <div class="form-group">
+                    <label for="carNumber">מספר רכב:</label>
+                    <input type="text" id="carNumber" name="carNumber" placeholder="הכנס מספר רכב (לדוגמה: 7210453)" required>
+                </div>
+                <button type="submit" class="search-btn">חפש פרטי רכב</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>מחפש פרטי רכב...</div>
+            </div>
+
+            <div class="error" id="error">
+                <div>שגיאה בחיפוש. אנא נסה שוב או בדוק את מספר הרכב.</div>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h3 style="color: #FFD700; margin-bottom: 20px; text-align: center;">פרטי הרכב</h3>
+            <div class="result-item">
+                <span class="result-label">מספר רכב:</span>
+                <span class="result-value" id="resultCarNumber">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">מספר שלדה (VIN):</span>
+                <span class="result-value" id="resultVin">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">יצרן:</span>
+                <span class="result-value" id="resultManufacturer">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">דגם:</span>
+                <span class="result-value" id="resultModel">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">שנת יצור:</span>
+                <span class="result-value" id="resultYear">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">צבע:</span>
+                <span class="result-value" id="resultColor">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">סוג דלק:</span>
+                <span class="result-value" id="resultFuel">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">טסט אחרון:</span>
+                <span class="result-value" id="resultLastTest">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">תוקף טסט:</span>
+                <span class="result-value" id="resultTestValidity">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // כאן תצטרך להחליף את ה-URL ל-webhook שלך
+        const WEBHOOK_URL = 'YOUR_WEBHOOK_URL_HERE';
+
+        document.getElementById('carForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const carNumber = document.getElementById('carNumber').value.trim();
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const error = document.getElementById('error');
+            
+            // הסתר תוצאות קודמות
+            results.style.display = 'none';
+            error.style.display = 'none';
+            loading.style.display = 'block';
+            
+            try {
+                // שלח בקשה ל-webhook
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        carNumber: carNumber
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('שגיאה בשרת');
+                }
+                
+                const data = await response.json();
+                
+                // עדכן את התוצאות
+                if (data && data.result && data.result.records && data.result.records.length > 0) {
+                    const record = data.result.records[0];
+                    
+                    document.getElementById('resultCarNumber').textContent = record.mispar_rechev || '-';
+                    document.getElementById('resultVin').textContent = record.misgeret || '-';
+                    document.getElementById('resultManufacturer').textContent = record.tozeret_nm || '-';
+                    document.getElementById('resultModel').textContent = record.degem_nm || '-';
+                    document.getElementById('resultYear').textContent = record.shnat_yitzur || '-';
+                    document.getElementById('resultColor').textContent = record.tzeva_rechev || '-';
+                    document.getElementById('resultFuel').textContent = record.sug_delek_nm || '-';
+                    document.getElementById('resultLastTest').textContent = record.mivchan_acharon_dt || '-';
+                    document.getElementById('resultTestValidity').textContent = record.tokef_dt || '-';
+                    
+                    results.style.display = 'block';
+                } else {
+                    throw new Error('לא נמצאו נתונים לרכב זה');
+                }
+                
+            } catch (err) {
+                console.error('Error:', err);
+                error.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        // תמיכה במקלדת - Enter
+        document.getElementById('carNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('carForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
