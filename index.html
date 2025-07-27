@@ -167,6 +167,47 @@
             color: #FFA500;
         }
 
+        .vin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .vin-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(45deg, #45a049, #4CAF50);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-success {
+            background: linear-gradient(45deg, #2196F3, #1976D2) !important;
+        }
+
         .error {
             display: none;
             background: rgba(255, 0, 0, 0.1);
@@ -252,9 +293,12 @@
                 <span class="result-label">מספר רכב:</span>
                 <span class="result-value" id="resultCarNumber">-</span>
             </div>
-            <div class="result-item">
+            <div class="vin-item">
                 <span class="result-label">מספר שלדה (VIN):</span>
-                <span class="result-value" id="resultVin">-</span>
+                <div class="vin-content">
+                    <span class="result-value" id="resultVin">-</span>
+                    <button class="copy-btn" id="copyVinBtn" onclick="copyVin()">העתק</button>
+                </div>
             </div>
             <div class="result-item">
                 <span class="result-label">יצרן:</span>
@@ -290,6 +334,46 @@
     <script>
         // החלף את ה-URL הזה ל-webhook שלך מn8n
         const WEBHOOK_URL = 'https://jhonyblyt.app.n8n.cloud/webhook/car-check';
+
+        // פונקציה לניגון צלילים
+        function play(soundPath, loaderId, soundId) {
+            // ניגון הקובץ שהורדת
+            const audio = new Audio(soundPath);
+            audio.play().catch(function(error) {
+                console.log('לא ניתן לנגן את הצליל:', error);
+                // fallback - ויברציה אם יש
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+            });
+        }
+
+        // פונקציה להעתקת מספר השלדה
+        function copyVin() {
+            const vinElement = document.getElementById('resultVin');
+            const copyBtn = document.getElementById('copyVinBtn');
+            const vinText = vinElement.textContent;
+            
+            if (vinText && vinText !== '-') {
+                navigator.clipboard.writeText(vinText).then(function() {
+                    // שינוי מראה הכפתור לאישור
+                    copyBtn.textContent = 'הועתק!';
+                    copyBtn.classList.add('copy-success');
+                    
+                    // החזרת הכפתור למצב רגיל אחרי 2 שניות
+                    setTimeout(function() {
+                        copyBtn.textContent = 'העתק';
+                        copyBtn.classList.remove('copy-success');
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('שגיאה בהעתקה: ', err);
+                    copyBtn.textContent = 'שגיאה';
+                    setTimeout(function() {
+                        copyBtn.textContent = 'העתק';
+                    }, 2000);
+                });
+            }
+        }
 
         document.getElementById('carForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -344,6 +428,10 @@
             } catch (err) {
                 console.error('Error:', err);
                 error.style.display = 'block';
+                
+                // ניגון צליל כשלא נמצאות תוצאות
+                // שימוש בקובץ הצליל שהורדת
+                play('./wcgertcz074.mp3', 'loader-218045', 'oh-shit-not-good-50355');
             } finally {
                 loading.style.display = 'none';
             }
