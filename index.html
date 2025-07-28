@@ -181,9 +181,13 @@
             gap: 10px;
         }
 
-        .copy-btn {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            color: white;
+        .vin-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .copy-btn, .parts-btn {
             border: none;
             padding: 8px 12px;
             border-radius: 5px;
@@ -192,6 +196,13 @@
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
         }
 
         .copy-btn:hover {
@@ -200,12 +211,23 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
-        .copy-btn:active {
+        .parts-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .parts-btn:hover {
+            background: linear-gradient(45deg, #1976D2, #2196F3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .copy-btn:active, .parts-btn:active {
             transform: translateY(0);
         }
 
         .copy-success {
-            background: linear-gradient(45deg, #2196F3, #1976D2) !important;
+            background: linear-gradient(45deg, #4CAF50, #45a049) !important;
         }
 
         .error {
@@ -258,6 +280,16 @@
             .search-section {
                 padding: 25px;
             }
+
+            .vin-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .copy-btn, .parts-btn {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -297,7 +329,10 @@
                 <span class="result-label">מספר שלדה (VIN):</span>
                 <div class="vin-content">
                     <span class="result-value" id="resultVin">-</span>
-                    <button class="copy-btn" id="copyVinBtn" onclick="copyVin()">העתק</button>
+                    <div class="vin-buttons">
+                        <button class="copy-btn" id="copyVinBtn" onclick="copyVin()">העתק</button>
+                        <a class="parts-btn" id="partsBtn" href="#" target="_blank" onclick="openPartsSearch()">חלקי חילוף</a>
+                    </div>
                 </div>
             </div>
             <div class="result-item">
@@ -372,6 +407,19 @@
                         copyBtn.textContent = 'העתק';
                     }, 2000);
                 });
+            }
+        }
+
+        // פונקציה לפתיחת חיפוש חלקי חילוף
+        function openPartsSearch() {
+            const vinElement = document.getElementById('resultVin');
+            const vinText = vinElement.textContent;
+            
+            if (vinText && vinText !== '-') {
+                const partsUrl = `https://partsouq.com/en/search/all?q=${encodeURIComponent(vinText)}`;
+                window.open(partsUrl, '_blank');
+            } else {
+                alert('אין מספר שלדה זמין');
             }
         }
 
